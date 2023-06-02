@@ -1,12 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <title>Enregistrement</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f2f2f2;
+    }
+    
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .notification {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px;
+      background-color: #ff0000;
+      color: #ffffff;
+      font-weight: bold;
+      border-radius: 5px;
+      z-index: 9999;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-   <h1>Mont Portfolio</h1> 
+  <div class="container">
+    <h1>Enregistrement</h1>
+    <div class="form-group">
+      <label for="username">Nom d'utilisateur :</label>
+      <input type="text" id="username" name="username" required>
+    </div>
+    <div class="form-group">
+      <label for="Discord ID" >Discord ID  :</label>
+      <input type="text" id="Discord ID " name="Discord ID " required>
+    </div>
+    <div class="form-group">
+      <label for="key">Clé :</label>
+      <input type="text" id="key" name="key" required>
+    </div>
+    <button class="btn" onclick="sendMessage()">Enregistrer</button>
+  </div>
+
+  <div class="notification" id="notification"></div>
+
+  <script>
+    function showNotification(message) {
+      var notificationElement = document.getElementById('notification');
+      notificationElement.innerText = message;
+      notificationElement.style.display = 'block';
+
+      setTimeout(function() {
+        notificationElement.style.display = 'none';
+      }, 2000);
+    }
+
+    function sendMessage() {
+      var username = document.getElementById('username').value;
+      var Discord_ID = document.getElementById('Discord ID ').value;
+      var key = document.getElementById('key').value;
+
+      // Vérifier si la clé est valide
+      var isValidKey = validateKey(key);
+      if (!isValidKey) {
+        showNotification('Clé invalide');
+        return;
+      }
+
+      // Supprimer la clé du champ de saisie pour qu'elle ne puisse pas être réutilisée
+      document.getElementById('key').value = '';
+
+      var webhookURL = 'https://discord.com/api/webhooks/1112417286972788837/ap1hyqHt2OURvPnySQyxXC0J6MDqgSXjKrBeSW7IDvLQhrd46L6efgtC1c2_2KKD8t4_';
+
+      var payload = {
+        embeds: [
+          {
+            title: 'Informations',
+            description: '**Nom d\'utilisateur:** ' + username + '\n**Discord ID :** ' + Discord_ID + '\n\n**Clé utilisée:** ' + key,
+            color: 16711680
+          }
+        ]
+      };
+
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function(response) {
+          showNotification('Enregistrement réussi');
+        })
+        .catch(function(error) {
+          console.error('Erreur :', error);
+        });
+    }
+
+    function validateKey(key) {
+      // Mettez ici votre logique de validation de clé
+      // Par exemple, vous pouvez vérifier si la clé correspond à un certain format ou si elle existe dans une liste de clés valides.
+      // Dans cet exemple, nous vérifions simplement si la clé a une longueur de 8 caractères.
+      return key.length === 8;
+    }
+  </script>
 </body>
 </html>
